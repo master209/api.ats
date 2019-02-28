@@ -13,44 +13,68 @@ $config = [
     ],
     'components' => [
         'request' => [
-            // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => '_A2ACbp7Ff6R3fmXkmsyZav-jINgxy68',
+            'parsers' => [
+                'application/json' => 'yii\web\JsonParser',
+            ],
+            // ! insert a secret key in the following - this is required by cookie validation
+            'cookieValidationKey' => 'hO4_IrFch4dEb7BIxY7_wwfP7Y94j3j',
         ],
-        'cache' => [
+        'response' => [
+            'formatters' => [
+                'json' => [
+                    'class' => 'yii\web\JsonResponseFormatter',
+                    'prettyPrint' => YII_DEBUG,
+                    'encodeOptions' => JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+                ],
+            ],
+        ],
+        /*'cache' => [
             'class' => 'yii\caching\FileCache',
-        ],
+        ],*/
         'user' => [
             'identityClass' => 'app\models\User',
-            'enableAutoLogin' => true,
+            'enableAutoLogin' => false,
+            'enableSession' => false,
+
         ],
-        'errorHandler' => [
-            'errorAction' => 'site/error',
-        ],
-        'mailer' => [
+        /*'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',
             // send all mails to a file by default. You have to set
             // 'useFileTransport' to false and configure a transport
             // for the mailer to send real emails.
             'useFileTransport' => true,
-        ],
+        ],*/
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
                 [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
+                    // Create API log in the standard log dir
+                    // But in file 'api.log':
+                    'logFile' => '@app/runtime/logs/api.log',
                 ],
             ],
         ],
         'db' => $db,
-        /*
+
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
+            'enableStrictParsing' => false,
             'rules' => [
+                '' => 'site/index',
+                'auth' => 'site/login',
+
+                'GET profile' => 'profile/index',
+                'PUT,PATCH profile' => 'profile/update',
+
+                'GET posts' => 'post/index',
+                'PUT,PATCH posts' => 'post/update',
+                ['class' => 'yii\rest\UrlRule', 'controller' => 'post'],
             ],
         ],
-        */
+
     ],
     'params' => $params,
 ];
