@@ -26,7 +26,7 @@ class PostSearch extends Post
      */
     public function search($params)
     {
-        $query = Post::find();
+        $query = Post::find()->with('user');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

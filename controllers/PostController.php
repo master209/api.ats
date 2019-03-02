@@ -4,7 +4,7 @@ namespace app\controllers;
 
 use app\models\PostSearch;
 use app\models\Post;
-//use common\rbac\Rbac;
+use app\rbac\Rbac;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\auth\HttpBasicAuth;
@@ -45,7 +45,7 @@ class PostController extends ActiveController
     public function actions()
     {
         $actions = parent::actions();
-        unset($actions['create']);  //нельзя создать новый пост
+        unset($actions['create']); //!стандартный actionCreate() отключаем т.к. используем свой
         $actions['index']['prepareDataProvider'] = [$this, 'prepareDataProvider'];
         return $actions;
     }
@@ -79,9 +79,12 @@ class PostController extends ActiveController
 //echo"<pre>"; print_r($action); echo"</pre>"; die();
 
         if (in_array($action, ['update', 'delete'])) {
-            if (!Yii::$app->user->can(Rbac::MANAGE_POST, ['post' => $model])) {
-                throw  new ForbiddenHttpException('Forbidden.');
+            if ($model->user_id !== \Yii::$app->user->id) {
+                throw new \yii\web\ForbiddenHttpException(sprintf('You can only %s post that you\'ve created.', $action));
             }
+/*            if (!Yii::$app->user->can(Rbac::MANAGE_POST, ['post' => $model])) {
+                throw  new ForbiddenHttpException('Forbidden.');
+            }*/
         }
     }
 }

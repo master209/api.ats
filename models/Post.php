@@ -70,10 +70,12 @@ class Post extends ActiveRecord implements Linkable
         return new PostQuery(get_called_class());
     }
 
+// Поля extraFields() от просто fields() отличаются тем, что они просто по умолчанию не выводятся (5:10:00)
+// /posts/1?expand=author
     public function extraFields()
     {
         return [
-            'author' => 'user',
+            'author' => 'user', //поле будет называтья 'author', а браться будет из $this->user
         ];
     }
 
